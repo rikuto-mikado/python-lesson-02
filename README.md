@@ -8,6 +8,45 @@
 
 ## Notes
 
+### Understanding `if __name__ == "__main__"`
+
+#### What is `__name__`?
+
+`__name__` is a special variable automatically set by Python:
+
+| How the file is used | Value of `__name__` |
+|---------------------|---------------------|
+| Run directly: `python app.py` | `"__main__"` |
+| Imported: `import app` | `"app"` (module name) |
+
+#### Why use `if __name__ == "__main__"`?
+
+```python
+# Code here runs always (even when imported)
+
+if __name__ == "__main__":
+    # Code here runs ONLY when the file is executed directly
+    app.run(debug=True, port=5001)
+```
+
+**Benefits**:
+- Prevents code from running when the file is imported as a module
+- Allows the file to be both executable and importable
+- Useful for testing and code reusability
+
+#### Dunder Variables (`__variable__`)
+
+Variables with double underscores are called **"dunder" (double-underscore)** variables.
+
+**Common dunder variables**:
+- `__name__`: Module name or `"__main__"` when executed directly
+- `__file__`: Path to the current file
+- `__init__`: Constructor method in classes
+- `__str__`: String representation of an object
+- `__doc__`: Documentation string
+
+These are **reserved by Python** for special purposes, not user-defined initial values.
+
 ### VSCode Debugging (MacBook)
 
 #### How to Open Debug View
