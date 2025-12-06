@@ -47,6 +47,7 @@ Variables with double underscores are called **"dunder" (double-underscore)** va
 
 These are **reserved by Python** for special purposes, not user-defined initial values.
 
+
 ### VSCode Debugging (MacBook)
 
 #### How to Open Debug View
