@@ -8,7 +8,7 @@
 
 ## Notes
 
-### Understanding `if __name__ == "__main__"`
+### ○ Understanding `if __name__ == "__main__"`
 
 #### What is `__name__`?
 
@@ -48,7 +48,7 @@ Variables with double underscores are called **"dunder" (double-underscore)** va
 These are **reserved by Python** for special purposes, not user-defined initial values.
 
 
-### VSCode Debugging (MacBook)
+### ○ VSCode Debugging (MacBook)
 
 #### How to Open Debug View
 
