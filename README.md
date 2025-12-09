@@ -2,9 +2,70 @@
 
 ## What I Learned Today
 
+### 1. SQLAlchemy Database Operations
+
+#### Creating a Database Model
+```python
+# Define a database table as a Python class
+class Form(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    first_name = db.Column(db.String(80))
+    last_name = db.Column(db.String(80))
+    email = db.Column(db.String(80))
+    date = db.Column(db.Date)  # Note: expects date object, not string
+    occupation = db.Column(db.String(80))
+```
+
+#### Database Initialization
+```python
+# This creates the database tables based on the model definitions
+db.create_all()  # Safe to call multiple times - only creates missing tables
+```
+
+### 2. Saving Data to Database (Three-Step Process)
+
+| Step | Code | What It Does |
+|------|------|--------------|
+| 1. Create object (in memory) | `form = Form(first_name="John", ...)` | Creates Python object, **not yet in database** |
+| 2. Stage for insertion | `db.session.add(form)` | Adds object to session (staging area) |
+| 3. Save to database | `db.session.commit()` | Actually writes to database |
+
+**Important**: Without `db.session.commit()`, data is NOT saved to the database!
+
+### 3. Converting String to Date Object
+
+```python
+from datetime import datetime  # Import datetime class, not just date
+
+# Form data comes as string: "2025-12-09"
+date_string = request.form["date"]
+
+# Convert to date object for database
+date_obj = datetime.strptime(date_string, "%Y-%m-%d").date()
+
+# Use date_obj because db.Column(db.Date) expects a date object, not a string
+form = Form(date=date_obj)
+```
+
+### 4. HTML Radio Button Values
+
+**Problem**: Radio buttons without `value` attribute send "on" as default value.
+
+```html
+<!-- Wrong: sends "on" to database -->
+<input type="radio" name="occupation">
+
+<!-- Correct: sends actual value -->
+<input type="radio" name="occupation" value="Employed">
+```
 
 ## What Was Difficult
 
+Understanding the three-step database save process was confusing at first. I initially thought `Form()` or `db.session.add()` would save data, but only `db.session.commit()` actually writes to the database.
+
+## Memo
+
+This lesson covered Flask form handling with SQLAlchemy database integration, including proper data type conversion and HTML form attribute configuration. The key takeaway is understanding the staging nature of SQLAlchemy sessions where objects are prepared in memory before being committed to the database.
 
 ## Notes
 

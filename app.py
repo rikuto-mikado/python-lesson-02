@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import Flask, render_template, request
 
 # Import SQLAlchemy for database functionality and initialize the database object
@@ -30,7 +31,23 @@ def index():
         last_name = request.form["last_name"]
         email = request.form["email"]
         date = request.form["date"]
+        date_obj = datetime.strptime(date, "%Y-%m-%d").date()
         occupation = request.form["occupation"]
+
+        # Create a new Form instance
+        form = Form(
+            first_name=first_name,
+            last_name=last_name,
+            email=email,
+            # Use date_obj (date object) instead of date (string) because the database column expects a Date type
+            date=date_obj,
+            occupation=occupation,
+        )
+        # Add the form object to the database session (staging for database insertion)
+        # Note: This does NOT create duplicate entries - it only stages the object
+        # The actual database insertion happens when db.session.commit() is called
+        db.session.add(form)
+        db.session.commit()
 
     # Render and return the HTML template
     return render_template("index.html")
