@@ -1,5 +1,7 @@
 from datetime import datetime
-from flask import Flask, render_template, request
+
+# flash: Function to display one-time messages to users (e.g., success/error notifications after form submission)
+from flask import Flask, render_template, request, flash
 
 # Import SQLAlchemy for database functionality and initialize the database object
 # This allows us to interact with databases using Python objects instead of raw SQL
@@ -48,6 +50,7 @@ def index():
         # The actual database insertion happens when db.session.commit() is called
         db.session.add(form)
         db.session.commit()
+        flash(f"{first_name}, Your form was submitted successfully!", "success")
 
     # Render and return the HTML template
     return render_template("index.html")
