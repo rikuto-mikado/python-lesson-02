@@ -1,4 +1,6 @@
 from datetime import datetime
+import os
+from dotenv import load_dotenv
 
 # flash: Function to display one-time messages to users (e.g., success/error notifications after form submission)
 from flask import Flask, render_template, request, flash
@@ -6,11 +8,23 @@ from flask import Flask, render_template, request, flash
 # Import SQLAlchemy for database functionality and initialize the database object
 # This allows us to interact with databases using Python objects instead of raw SQL
 from flask_sqlalchemy import SQLAlchemy
+from flask_mail import Mail, Message
+
+load_dotenv()
 
 app = Flask(__name__)
-app.config["SECRET_KEY"] = "myapplicationsecretkey102030"
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.db"
+
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("SQLALCHEMY_DATABASE_URI")
+app.config["MAIL_SERVER"] = os.getenv("MAIL_SERVER")
+app.config["MAIL_PORT"] = int(os.getenv("MAIL_PORT"))
+app.config["MAIL_USE_SSL"] = os.getenv("MAIL_USE_SSL") == "True"
+app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD")
+app.config["MAIL_USERNAME"] = os.getenv("MAIL_USERNAME")
+
 db = SQLAlchemy(app)
+
+mail = Mail(app)
 
 
 class Form(db.Model):
@@ -50,6 +64,29 @@ def index():
         # The actual database insertion happens when db.session.commit() is called
         db.session.add(form)
         db.session.commit()
+
+        # Create email message body using f-string formatting
+        # \n creates line breaks in the email text
+        message_body = (
+            f"Thank you for your submission, {first_name}.\n"
+            f"Here are the details you provided: \n{first_name} {last_name}\n{date}\n"
+            f"Thank you!!"
+        )
+        # Create a Message object with email details
+        # subject: Email subject line
+        # sender: Email address sending the message (from .env MAIL_USERNAME)
+        # recipients: List of email addresses to receive the message
+        # body: The main text content of the email
+        message = Message(
+            subject="New Form Submission",
+            sender=app.config["MAIL_USERNAME"],
+            recipients=[email],
+            body=message_body,
+        )
+        # Send the email using Flask-Mail
+        # This connects to the SMTP server (Gmail) and sends the message
+        mail.send(message)
+
         flash(f"{first_name}, Your form was submitted successfully!", "success")
 
     # Render and return the HTML template
